@@ -1,9 +1,29 @@
 #voicemail_assistant.py
+import time
+import wave
 
-# from pydub import AudioSegment
-# from pydub.playback import play
+def answer(call=None):
+    try:
+        print(f"Incoming call from {call.caller}")
+        f = wave.open('prompt.wav', 'rb')
+        frames = f.getnframes()
+        data = f.readframes(frames)
+        f.close()
 
-def start_voicemail():
-    # greeting = AudioSegment.from_file("assets/audio/greeting.mp3", format="mp3")
-    # play(greeting)
-    print("Voicemail assistant started")
+        call.answer()
+        call.write_audio(data)
+
+        while call.state == CallState.ANSWERED:
+            dtmf = call.get_dtmf()
+            if dtmf == "1":
+                # Do something
+                call.hangup()
+            elif dtmf == "2":
+                # Do something else
+                call.hangup()
+            time.sleep(0.1)
+    except InvalidStateError:
+        pass
+    except:
+        call.hangup()
+

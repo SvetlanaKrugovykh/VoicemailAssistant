@@ -1,36 +1,53 @@
+#sip_client.py
 import os
+import socket
 from dotenv import load_dotenv
-from pyVoIP.VoIP import VoIPPhone, InvalidStateError
-from voicemail_assistant import start_voicemail  # import your voicemail assistant
+from pyVoIP.VoIP import VoIPPhone
+from voicemail_assistant import answer  # import your voicemail assistant
 
 load_dotenv()  # load variables from .env
 
-def answer(call):
+def is_udp_open(ip, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(2)  # two second timeout
     try:
-        call.answer()
-        print(f"Caller's phone number: {call.info().remote_info}")  # print the caller's phone number
-        start_voicemail()  # start the voicemail assistant
-        call.hangup()
-    except InvalidStateError:
-        pass
+        sock.connect((ip, port))
+        sock.close()
+        return True
+    except socket.error:
+        return False
 
 if __name__ == "__main__":
-    phone = VoIPPhone(os.getenv('SIP_SERVER_IP'), 
-                      int(os.getenv('SIP_SERVER_PORT')), 
-                      os.getenv('SIP_AUTHORIZATION_USER'), 
-                      os.getenv('SIP_PASSWORD'),
-                      callCallback=answer, myIP=os.getenv('LOCAL_IP'),
-                      rtpPortLow=10000, rtpPortHigh=20000)
-    
+    SIP_SERVER_IP = os.getenv('SIP_SERVER_IP')
+    SIP_SERVER_PORT = os.getenv('SIP_SERVER_PORT')
+    SIP_AUTHORIZATION_USER = os.getenv('SIP_AUTHORIZATION_USER')
+    SIP_PASSWORD = os.getenv('SIP_PASSWORD')
+    LOCAL_IP = os.getenv('LOCAL_IP')
+
+    if not all([SIP_SERVER_IP, SIP_SERVER_PORT, SIP_AUTHORIZATION_USER, SIP_PASSWORD, LOCAL_IP]):
+        print("Environment variables are not set. Exiting.")
+        exit(1)
+
+    SIP_SERVER_PORT = int(SIP_SERVER_PORT)
+
+    if not is_udp_open(SIP_SERVER_IP, SIP_SERVER_PORT):
+        print(f"Cannot connect to {SIP_SERVER_IP}:{SIP_SERVER_PORT} over UDP. Exiting.")
+        exit(1)
+
+    phone = VoIPPhone(SIP_SERVER_IP, 
+                      SIP_SERVER_PORT, 
+                      SIP_AUTHORIZATION_USER, 
+                      SIP_PASSWORD,
+                      myIP=LOCAL_IP, 
+                      callCallback=answer)
+
     try:
-        phone.register()
-        reg_info = phone.account.info()  # get registration info
-        print(f"Registration status: {reg_info.reg_status}")
-        print(f"Registration reason: {reg_info.reg_reason}")
-        print(f"Is account valid: {reg_info.is_valid}")
+        phone.start()
+        input('Press enter to disable the phone')
     except Exception as e:
         print(f"Registration failed: {e}")
+    finally:
+        phone.stop()
 
-    phone.start()
-    input('ggg')
-    phone.stop()
+
+
