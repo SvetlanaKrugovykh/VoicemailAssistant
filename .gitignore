@@ -4,7 +4,7 @@ path
 node_modules
 temp
 .env*
-.vscode
+#.vscode
 .idea
 .eslint*
 build

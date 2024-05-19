@@ -3,7 +3,8 @@ import os
 import socket
 from dotenv import load_dotenv
 from pyVoIP.VoIP import VoIPPhone
-from voicemail_assistant import answer  # import your voicemail assistant
+from voicemail_assistant import answer  
+from call_out import call_out
 
 load_dotenv()  # load variables from .env
 
@@ -43,6 +44,8 @@ if __name__ == "__main__":
 
     try:
         phone.start()
+        target_number = input('Enter the number to call: ')
+        call_out(phone, target_number)
         input('Press enter to disable the phone')
     except Exception as e:
         print(f"Registration failed: {e}")
