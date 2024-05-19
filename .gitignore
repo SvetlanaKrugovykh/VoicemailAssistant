@@ -7,3 +7,7 @@ temp
 .vscode
 .idea
 .eslint*
+build
+python-env
+third_party
+
