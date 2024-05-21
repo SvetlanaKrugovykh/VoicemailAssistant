@@ -1,5 +1,6 @@
 #voice_mail_assistant.py
 
+import time
 from pydub import AudioSegment
 from caller_number_processor import process_caller_number
 from local_enumerators import CallState
@@ -36,7 +37,7 @@ def answer(call=None):
                 recorded_audio.export("recorded_call.mp3", format="mp3")
                 call.hangup()
             elif dtmf == "2":
-                # Делаем что-то еще
+                # TODO 
                 call.hangup()
             time.sleep(0.1)
 
