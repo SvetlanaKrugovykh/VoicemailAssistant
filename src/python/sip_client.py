@@ -24,7 +24,8 @@ def is_udp_open(ip, port):
         logger.error(f"Failed to connect to {ip}:{port} over UDP: {e}")
         return False
 
-class VoIPPhone(BaseVoIPPhone):
+
+class VoIPPhone(BaseVoIPPhone):            
     def send_message(self, message):
         logger.debug(f"Sending SIP message: {message}")
         super().send_message(message)
@@ -33,6 +34,20 @@ class VoIPPhone(BaseVoIPPhone):
         message = super().receive_message()
         logger.debug(f"Received SIP message: {message}")
         return message
+    
+    def start(self) -> None:
+        logger.info("VoIPPhone start method called")
+        super().start()
+        logger.info("VoIPPhone start method finished")    
+
+    def stop(self, failed=False) -> None:
+        logger.info("VoIPPhone stop method called")
+        super().stop()
+        logger.info("VoIPPhone stop method finished")
+
+    def call_out(self, target_number):
+        logger.info(f"call_out called with phone: {self} and target_number: {target_number}")
+        phone.dial(target_number)
 
 if __name__ == "__main__":
     SIP_SERVER_IP = os.getenv('SIP_SERVER_IP')
@@ -59,15 +74,12 @@ if __name__ == "__main__":
                           myIP=LOCAL_IP, 
                           callCallback=answer)
 
-        logger.info("Starting the phone")
         phone.start()
         logger.info("Phone started successfully")
-
-        target_number = input('Enter the number to call: ')
+        target_number = "0442202020"  # replace with the number you want to call
         logger.info(f"Calling {target_number}")
         call_out(phone, target_number)
 
-        input('Press enter to disable the phone')
     except Exception as e:
         logger.error(f"Registration failed: {e}")
     finally:
