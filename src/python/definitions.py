@@ -3,7 +3,6 @@ import socket
 import logging
 from pyVoIP.VoIP import VoIPPhone as BaseVoIPPhone
 
-
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 

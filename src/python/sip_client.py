@@ -6,8 +6,6 @@ from definitions import VoIPPhone, is_udp_open, logger   # import from definitio
 from voicemail_assistant import answer  
 from call_out import call_out
 
-
-
 load_dotenv()  # load variables from .env
 
 if __name__ == "__main__":
