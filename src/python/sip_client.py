@@ -1,25 +1,29 @@
 #sip_client.py
 import os
 import time
+import hashlib
 from dotenv import load_dotenv
-from definitions import VoIPPhone, is_udp_open, logger   # import from definitions.py
+from definitions import is_udp_open, logger   # import from definitions.py
 from voicemail_assistant import answer  
 from call_out import call_out
+from pyVoIP.VoIP import VoIPPhone 
 
 load_dotenv()  # load variables from .env
 
 if __name__ == "__main__":
     SIP_SERVER_IP = os.getenv('SIP_SERVER_IP')
-    SIP_SERVER_PORT = os.getenv('SIP_SERVER_PORT')
+    SIP_SERVER_PORT = int(os.getenv('SIP_SERVER_PORT'))
     SIP_AUTHORIZATION_USER = os.getenv('SIP_AUTHORIZATION_USER')
     SIP_PASSWORD = os.getenv('SIP_PASSWORD')
     LOCAL_IP = os.getenv('LOCAL_IP')
 
+    hash_string = f"{SIP_AUTHORIZATION_USER}:{SIP_SERVER_IP}:{SIP_PASSWORD}"  #TODO
+    hash_object = hashlib.md5(hash_string.encode())                           #TODO
+    md5_hash = hash_object.hexdigest()                                        #TODO
+
     if not all([SIP_SERVER_IP, SIP_SERVER_PORT, SIP_AUTHORIZATION_USER, SIP_PASSWORD, LOCAL_IP]):
         logger.error("Environment variables are not set. Exiting.")
         exit(1)
-
-    SIP_SERVER_PORT = int(SIP_SERVER_PORT)
 
     if not is_udp_open(SIP_SERVER_IP, SIP_SERVER_PORT):
         logger.error(f"Cannot connect to {SIP_SERVER_IP}:{SIP_SERVER_PORT} over UDP. Exiting.")
@@ -30,10 +34,12 @@ if __name__ == "__main__":
                           SIP_SERVER_PORT, 
                           SIP_AUTHORIZATION_USER, 
                           SIP_PASSWORD,
-                          myIP=LOCAL_IP, 
+                          #TmyIP=LOCAL_IP,   #TODO
                           callCallback=answer)
 
         phone.start()
+        logger.info(f"VoIPPhone start method finished with answer: {phone._status}")
+
         time.sleep(3)
         print(phone.get_status())
 

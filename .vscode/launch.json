@@ -2,25 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch Node.js",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "runtimeExecutable": "node",
-      "program": "${workspaceFolder}/src/node/server.js",
-      "runtimeArgs": [
-        "--inspect"
-      ]
-    },
-    {
       "type": "debugpy",
       "request": "launch",
       "name": "Launch Python",
       "program": "${workspaceFolder}/src/python/sip_client.py",
       "console": "integratedTerminal",
-      "justMyCode": true,
+      "justMyCode": false,
       "stopOnEntry": true
     },
     {
@@ -29,16 +16,6 @@
       "request": "launch",
       "program": "${workspaceFolder}/src/python/tests/test_sip_client.py",
       "console": "integratedTerminal"
-    },
-    {
-      "name": "Node.js: audioService.js",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/src/node/services/audioService.js",
-      "console": "integratedTerminal",
-      "args": [
-        "assets/audio/greeting.mp3"
-      ]
     }
   ]
 }
