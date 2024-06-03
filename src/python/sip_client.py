@@ -17,10 +17,6 @@ if __name__ == "__main__":
     SIP_PASSWORD = os.getenv('SIP_PASSWORD')
     LOCAL_IP = os.getenv('LOCAL_IP')
 
-    hash_string = f"{SIP_AUTHORIZATION_USER}:{SIP_SERVER_IP}:{SIP_PASSWORD}"  #TODO
-    hash_object = hashlib.md5(hash_string.encode())                           #TODO
-    md5_hash = hash_object.hexdigest()                                        #TODO
-
     if not all([SIP_SERVER_IP, SIP_SERVER_PORT, SIP_AUTHORIZATION_USER, SIP_PASSWORD, LOCAL_IP]):
         logger.error("Environment variables are not set. Exiting.")
         exit(1)
@@ -34,7 +30,7 @@ if __name__ == "__main__":
                           SIP_SERVER_PORT, 
                           SIP_AUTHORIZATION_USER, 
                           SIP_PASSWORD,
-                          #TmyIP=LOCAL_IP,   #TODO
+                          LOCAL_IP,   
                           callCallback=answer)
 
         phone.start()
